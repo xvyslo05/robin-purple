@@ -1,0 +1,78 @@
+description:
+1. Test the form and find any issues making it hard or impossible to submit the form easily for a
+wide range of users (both mobile and desktop). Write a test report stating all the issues you have
+discovered in detail. Clarity and level of detail are key here.
+---------------------------------------------------------------------------------------------------
+
+Because I am not fluent in Japanese, I will use English descriptions as they were provided by Google Translate
+
+clarification of shortcuts:
+AC - acceptance criteria -> this will follow each issue with a solution what should be the final state
+
+solution:
+
+desktop resolution: macbook-14, set as More Space 
+mobile resolution: iphone-8
+
+Language change
+- japan only
+- as a user, I would like to be able to change languange to more international one (preferably English)
+-- AC: 
+-- There is a dropdown with more languages
+-- When a language is selected, the form and its components are present in that language
+
+Mandatory fields
+- it is not clear, which fields are mandatory to fill/select and which are not
+- as a user, I want to be informed which data are needed by the company 
+- for example:
+-- `Family name`, `phone number` and all selects are not mandatory. Why? This is confusing as hell.
+-- AC:
+-- Mark these fields as mandatory with some mandatory label/star before posting the form. OR If a field is not mandatory, mark it as non mandatory
+-- When submitting the form, make sure that all mandatory fields are filled and in correct format.
+
+Phone number format
+- it is possible to fill wrong phone number format, for example +81123
+- as a user, I want to know, which phone number format I should fill in. With a phone prefix? And which format +81 or 0081? Or completely without a prefix?
+- it is a big deal because of data consistency in database
+-- AC:
+-- Add a phone prefix field (dropdown select, preferably) and make user able to choose his own phone prefix. Then, after prefix is set, let user fill the phone number and check it via regex (each country has its own format)
+
+Email format
+- it is possible to fill wrong email format, for example `asd@asd`
+- as a database manager, I want to have only valid emails in database. This can be achieved by checking the email format by a regex, for example https://regex101.com/r/sI6yF5/1
+-- AC:
+-- Email should be valid, as it is being said in RFC2822 https://www.rfc-editor.org/rfc/rfc2822
+
+Selects
+- as said before, selects are not mandatory. Therefore, why they are even there?
+- there is zero explanation about what is being picked. For example, what is the deal about NANO (ECN) account type and why should I pick it?
+- As a user, I am overhelmed by the options and not getting the right informations about which values should I pick
+- I am not sure, if this is a proper legal approach, to ask user about the leverage, when you have no investment survey filled yet.
+-- AC:
+-- All select fields have to have the info button, or a hyperlink to some wiki page about the values, that user is picking.
+-- All select fields are mandatory, or marked as non mandatory. If marked as non mandatory, I think they should be present here.
+
+Value field (money)
+- user cannot set a negative (-2) or an exponential number (1e10)! Yay! <3
+- As a company, I want to force user to deposit as much as possible money with their first deposit (or deposit proposal). Therefore it doesn't make sense to deposit only 1000 JPN (158 CZK) vs. 1000 EUR (23k CZK) with their first deposit.
+-- AC:
+-- Set an according minimum amount of money for each currency. 
+-- If new currency is set, the amount of money gets cleared.
+
+Checkbox
+- as a user I don't want to receive any newsletters and/or special offer emails.
+- I suggest to split the checkbox into two like this:
+-- first one should be about data processing and sending mandatory emails - this checkbox should be mandatory -> maybe even because legal issues, i am not sure here
+-- second one should be about sending newsletters, specials offers, promotes, etc. - this checkbox should not be mandatory
+
+Submit
+- as a tester or developer, after submit I don't want to be redirected to production site, but stay in staging/testing environment
+-- AC:
+-- after succesful submit on testing environment, user is redirected to stage/testing env, not to production
+
+Zendesk
+- i am not sure, whether this zendesk is connected to testing env or a production one
+- if connected to production env, i suggest this should be connected to testing env
+- but i am not seeing this as an issue that should be limiting the user from filling and succesfully sending the form
+- desktop only: sometimes the zendesk chat widget goes below the viewport. During the completion of this task, I wasnt able to find out what is going wrong.
+- mobile only: when openning the Zendesk widget on mobile (Safari emulation), it opens a scalled form, that is almost impossible to fill. But on physical mobile device it is fine. 
