@@ -15,7 +15,7 @@ desktop resolution: macbook-14, set as More Space
 mobile resolution: iphone-8
 
 Language change
-- japan only
+- japanese only
 - as a user, I would like to be able to change languange to more international one (preferably English)
 -- AC: 
 -- There is a dropdown with more languages
