@@ -1,0 +1,8 @@
+Phone input accepts letters and other characters
+- since there is no validation, user is free to set any value he wants to
+Steps to reproduce:
+  1. go to form
+  2. set mandatory fields (first name, email, country, value)
+  3. set phoneNumber to some letter value -> for example 'asdf'
+  4. submit form
+

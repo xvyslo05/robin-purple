@@ -38,7 +38,7 @@ Phone number format
 -- Add a phone prefix field (dropdown select, preferably) and make user able to choose his own phone prefix. Then, after prefix is set, let user fill the phone number and check it via regex (each country has its own format)
 
 Email format
-- it is possible to fill wrong email format, for example `asd@asd`
+- it is possible to fill wrong email format, for example `asd@asd`, or `@a` only
 - as a database manager, I want to have only valid emails in database. This can be achieved by checking the email format by a regex, for example https://regex101.com/r/sI6yF5/1
 -- AC:
 -- Email should be valid, as it is being said in RFC2822 https://www.rfc-editor.org/rfc/rfc2822
