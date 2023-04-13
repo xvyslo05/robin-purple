@@ -6,3 +6,8 @@ Steps to reproduce:
   3. set phoneNumber to some letter value -> for example 'asdf'
   4. submit form
 
+------------------------------------------
+
+firstname and lastname inputs have changed id attributes
+ - firstname's id attribute is 'lastname'
+ - lastname's id attribute is 'firstname'

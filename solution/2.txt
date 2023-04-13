@@ -194,16 +194,4 @@ test scenarios:
         catch POST request to administration and check that all data are correctly set
         check via API in administration that all the data are posted and saved correctly (not going to be implemented)
         check via API the mailing box, if it contains an email with desired title and message (if possible)
-
-
-
-
-
-
-  
-
-
-
-  
-
   

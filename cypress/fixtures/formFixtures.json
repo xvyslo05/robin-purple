@@ -1,0 +1,21 @@
+{
+  "env" : {
+    "formUrl": "https://revolgy-forms-case-study-master.staging.axiory.com/jp/registration/demo",
+    "submitUrl": "https://revolgy-forms-case-study-master.staging.axiory.com/jp/registration/submit-form"
+  },
+  "user": {
+    "lastName": "Yamada",
+    "firstName": "Taro",
+    "email": "yamadataro@senpaiii.com",
+    "country": "Japan",
+    "phoneNumber": "1234567890"
+  },
+  "product": {
+    "platform": ["MetaTrader4", "cTrader"],
+    "accountType": ["Standard (STP)", "NANO (ECN)"],
+    "leverage": ["1:1", "1:10", "1:25", "1:50", "1:100", "1:200", "1:300", "1:400"],
+    "currency": ["JPY", "USD", "EUR"]
+  },
+  "minDeposit": 1000,
+  "maxDeposit": 10000000
+}
