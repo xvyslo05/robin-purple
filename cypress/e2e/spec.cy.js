@@ -12,7 +12,7 @@ mock form.
 
 cy.fixture() -> used as a import -> more readable than using cy.fixture(), by documentation it is a valid usage
 cy.intercept() -> used to intercept the form submit request and check the data
-cy.request() -> not used, but I would use it to check the form submit via API and then checking it in the administration -> see the it.skip() test
+cy.request() -> not used, but I would use it to check the form submit via API and then checking it in the administration -> see the it.skip() test as a proposal
 */
 
 import * as formFixtures from "../fixtures/formFixtures.json";
@@ -73,7 +73,7 @@ describe("Robin - Intro task", () => {
         expect(body).to.include(`iAgreeDemo=on`);
 
         // if(email) expect(body).to.include(`email=${email}`);
-        // TODO: not checking email because of missing @ in the email. This will need some workaround
+        // TODO: not checking email because of missing @ in the email payload in submit request. This will need some workaround
       });
   }
 
