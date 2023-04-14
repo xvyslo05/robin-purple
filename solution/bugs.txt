@@ -8,7 +8,7 @@ Steps to reproduce:
 
 ------------------------------------------
 
-firstname and lastname inputs have changed id attributes
+firstname and lastname inputs have changed id attributes vice versa
  - firstname's id attribute is 'lastname'
  - lastname's id attribute is 'firstname'
 
