@@ -34,7 +34,7 @@ describe("Robin - Intro task", () => {
     depositValue,
     emailCheckbox,
   }) {
-    if (firstName) cy.getById("lastname").type(firstName); // bug reported in bugs.txt file
+    if (firstName) cy.getById("lastname").type(firstName); // name bug reported in bugs.txt file
     if (phoneNumber) cy.getById("phone").type(phoneNumber);
     if (email) cy.getById("email").type(email);
     if (depositValue) cy.getById("deposit").type(depositValue);
@@ -57,11 +57,11 @@ describe("Robin - Intro task", () => {
     cy.wait("@formSubmit")
       .its("request.body")
       .then((body) => {
-        if (firstName) expect(body).to.include(`firstname=${firstName}`);
+        if (firstName) expect(body).to.include(`firstname=${firstName}`); // name bug reported in bugs.txt file
         if (lastName) expect(body).to.include(`lastname=${lastName}`);
         if (phoneNumber) expect(body).to.include(`phone=${phoneNumber}`);
         if (platform) expect(body).to.include(`platform=${platform}`);
-        if (country) expect(body).to.include(`country=${country}`);
+        if (country) expect(body).to.include(`country=${country}`); // country bug reported in bugs.txt file
         if (accountType) expect(body).to.include(`accountType=${accountType}`);
         if (leverage) expect(body).to.include(`leverage=${leverage}`);
         if (currency) expect(body).to.include(`currency=${currency}`);
@@ -80,7 +80,7 @@ describe("Robin - Intro task", () => {
     );
 
     trySubmitWithoutMandatoryData();
-    cy.getById("lastname").type(formFixtures.user.firstName); // bug reported in bugs.txt file
+    cy.getById("lastname").type(formFixtures.user.firstName); // name bug reported in bugs.txt file
 
     trySubmitWithoutMandatoryData();
     cy.getById("phone").type(formFixtures.user.phoneNumber);
@@ -188,7 +188,7 @@ describe("Robin - Intro task", () => {
       emailCheckbox: true,
     });
 
-    cy.getById("firstname").type(123); // bug reported in bugs.txt file
+    cy.getById("firstname").type(123); // name bug reported in bugs.txt file
     trySubmitWithoutMandatoryData();
   });
 
@@ -206,8 +206,8 @@ describe("Robin - Intro task", () => {
       emailCheckbox: true,
     });
 
-    cy.getById("firstname").type(formFixtures.user.lastName); // bug reported in bugs.txt file
-    cy.getById("countryLabel").type(formFixtures.user.country);
+    cy.getById("firstname").type(formFixtures.user.lastName); // name bug reported in bugs.txt file
+    cy.getById("countryLabel").type(formFixtures.user.country); // country bug reported in bugs.txt file
 
     cy.getById("platform").select(formFixtures.product.platform[0]); // possibility to enhance this and all selects with a random number between the range of the options
     cy.getById("accountType").select(formFixtures.product.accountType[0]);
@@ -220,7 +220,7 @@ describe("Robin - Intro task", () => {
       depositValue: depositValue,
       firstName: formFixtures.user.lastName,
       currency: formFixtures.product.currency[0],
-      country: formFixtures.user.country, //bug reported in bugs.txt file
+      country: formFixtures.user.country, // country bug reported in bugs.txt file
     });
   });
 });

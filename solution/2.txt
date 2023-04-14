@@ -147,7 +147,7 @@ test scenarios:
     2. after submit, there should be a message, that initialBalance is in invalid format and form should not be submitted
     3. clear initialBalance and fill with a random integer from an interval <1; minDeposit) and submit
     4. after submit, there should be a message, that initialBalance has to be greather or equal than minDeposit
-    5. clear initialBalance and fill with a random integer from an interval (maxDeposit; ∞) and submit
+    5. clear initialBalance and fill with a random integer from an interval (maxDeposit; INT_MAX) and submit
     6. after submit, there should be a message, that initialBalance has to be lower or equal than maxDeposit
     7. clear initialBalance and fill with a random integer from an interval <minDeposit; maxDeposit> and submit
   

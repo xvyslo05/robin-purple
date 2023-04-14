@@ -13,7 +13,7 @@ firstname and lastname inputs have changed id attributes
  - lastname's id attribute is 'firstname'
 
 ------------------------------------------
-When sending a filled form, country is not set in the payload
+When sending a form with a country filled, country is not set in the payload
 - two optional bugs:
 1. country selector does not work properly (you cannot select a country)
 2. country is filled wrong, therefore rather no value is sent (most unlikely)
