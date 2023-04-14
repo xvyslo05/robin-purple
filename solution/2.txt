@@ -33,15 +33,15 @@ preconditions:
     visit baseUrl
     baseUrl is succefully loaded
   
-  fillMandatoryInfo(firstName, phoneNumber, mailAddress, initialBalance, emailCheckbox):
+  fillMandatoryInfo(firstName, phoneNumber, email, depositValue, emailCheckbox):
     if(firstName)
       fillFirstName(user.firstName)
     if(phoneNumber):
       fillPhoneNumber(user.phoneNumber)
-    if(mailAddress)
-      fillMailAddress(user.mailAddress)
-    if(initialBalance)
-      fillInitialBalance(Math.random() * (maxDeposit - minDeposit) + minDeposit)
+    if(email)
+      fillemail(user.email)
+    if(depositValue)
+      fillDepositValue(Math.random() * (maxDeposit - minDeposit) + minDeposit)
     if(emailCheckbox)
       checkEmailCheckbox(true)
 
@@ -54,8 +54,8 @@ test scenarios:
     there are only a few mandatory fields in this form:
       firstName
       phoneNumber
-      mailAddress
-      initialBalance
+      email
+      depositValue
       email checkbox
   
   preconditions:
@@ -66,10 +66,10 @@ test scenarios:
     2. fill user.firstName into firstName field
     3. submit form. After submit, there should be a message, that phoneNumber is required and form should not be submitted
     4. fill user.phoneNumber into phoneNumber field
-    5. submit form. After submit, there should be a message, that mailAddress is required and form should not be submitted
-    6. fill user.mailAddress into mailAddress field
-    7. submit form. After submit, there should be a message, that initialBalance is required and form should not be submitted
-    8. fill initialBalance value into initialBalance field. Get this number as a random integer between minDeposit and maxDeposit (both values included)
+    5. submit form. After submit, there should be a message, that email is required and form should not be submitted
+    6. fill user.email into email field
+    7. submit form. After submit, there should be a message, that depositValue is required and form should not be submitted
+    8. fill depositValue value into depositValue field. Get this number as a random integer between minDeposit and maxDeposit (both values included)
     9. submit form. After submit, there should be a message, that checking the checkbox is required and form should not be submitted
     10. check email checkbox as TRUE
     11. submit form
@@ -87,7 +87,7 @@ test scenarios:
 
   preconditions:
     loadForm()
-    fillMandatoryInfo(phoneNumber, mailAddress, initialBalance, emailCheckbox)
+    fillMandatoryInfo(phoneNumber, email, depositValue, emailCheckbox)
   
   steps:
     1. fill random number value into firstName field
@@ -103,7 +103,7 @@ test scenarios:
 
   preconditions:
     loadForm()
-    fillMandatoryInfo(firstName, mailAddress, initialBalance, emailCheckbox)
+    fillMandatoryInfo(firstName, email, depositValue, emailCheckbox)
 
   steps:
     1. fill phoneNumber with a random string of letters
@@ -115,45 +115,45 @@ test scenarios:
 4. Check that email is in correct format
   description:
     Email should be in a valid format, as provided in the RFC2822 https://www.rfc-editor.org/rfc/rfc2822. The goal of this test case is to prove, that user has to fill email in a valid format.
-    !!! BUT !!! as there is a validation missing (at this moment mailAddress is checked that it only contains @ symbol + one more letter, for example `@a`), this test will fail, until a validation gets implemented
+    !!! BUT !!! as there is a validation missing (at this moment email is checked that it only contains @ symbol + one more letter, for example `@a`), this test will fail, until a validation gets implemented
 
   preconditions:
     loadForm()
     fillMandatoryInfo(firstName, phoneNumber)
 
   steps:
-    1. fill mailAddress with a random string of letters and submit
-    2. after submit, there should be a message, that mailAddress is in invalid format and form should not be submitted
-    3. clear mailAddress and fill with `@foo` and submit
-    4. after submit, there should be a message, that mailAddress is in invalid format and form should not be submitted
-    5. clear mailAddress and fill with `foo@bar` and submit
-    6. after submit, there should be a message, that mailAddress is in invalid format and form should not be submitted
-    7. clear mailAddress and fill with `foo@bar.b` and submit
+    1. fill email with a random string of letters and submit
+    2. after submit, there should be a message, that email is in invalid format and form should not be submitted
+    3. clear email and fill with `@foo` and submit
+    4. after submit, there should be a message, that email is in invalid format and form should not be submitted
+    5. clear email and fill with `foo@bar` and submit
+    6. after submit, there should be a message, that email is in invalid format and form should not be submitted
+    7. clear email and fill with `foo@bar.b` and submit
     
 
   desired final state:
-    After submit, there should be a message, that mailAddress is in invalid format and form should not be submitted
+    After submit, there should be a message, that email is in invalid format and form should not be submitted
 
-5. Check that initialBalance is in correct format
+5. Check that depositValue is in correct format
   description:
-    Since the initialBalance is supposed to be an integer of a interval <minDeposit; maxDeposit>, it is desired to check, that user is able to submit an interger from this interval only. The main goal of this test case is to prove it.
+    Since the depositValue is supposed to be an integer of a interval <minDeposit; maxDeposit>, it is desired to check, that user is able to submit an interger from this interval only. The main goal of this test case is to prove it.
 
   preconditions:
     loadForm()
-    fillMandatoryInfo(firstName, phoneNumber, mailAddress, emailCheckbox)
+    fillMandatoryInfo(firstName, phoneNumber, email, emailCheckbox)
 
   steps:
-    1. fill initialBalance letter strip, for example "abc", and submit
-    2. after submit, there should be a message, that initialBalance is in invalid format and form should not be submitted
-    3. fill initialBalance with a negative integer, for example `-22`, and submit
-    4. after submit, there should be a message, that initialBalance is in invalid format and form should not be submitted
-    5. clear initialBalance and fill with a random integer from an interval <1; minDeposit) and submit
-    6. after submit, there should be a message, that initialBalance has to be greather or equal than minDeposit and form should not be submitted
-    7. clear initialBalance and fill with a random integer from an interval (maxDeposit; INT_MAX) and submit
-    8. after submit, there should be a message, that initialBalance has to be lower or equal than maxDeposit and form should not be submitted
+    1. fill depositValue letter string, for example "abc", and submit
+    2. after submit, there should be a message, that depositValue is in invalid format and form should not be submitted
+    3. fill depositValue with a negative integer, for example `-22`, and submit
+    4. after submit, there should be a message, that depositValue is in invalid format and form should not be submitted
+    5. clear depositValue and fill with a random integer from an interval <1; minDeposit) and submit
+    6. after submit, there should be a message, that depositValue has to be greather or equal than minDeposit and form should not be submitted
+    7. clear depositValue and fill with a random integer from an interval (maxDeposit; INT_MAX) and submit
+    8. after submit, there should be a message, that depositValue has to be lower or equal than maxDeposit and form should not be submitted
   
   desired final state:
-    after submit, there should be a message, that initialBalance has to be lower or equal than maxDeposit and form should not be submitted
+    after submit, there should be a message, that depositValue has to be lower or equal than maxDeposit and form should not be submitted
 
 6. Check that lastName is in correct format
   description
@@ -161,7 +161,7 @@ test scenarios:
 
   preconditions:
     loadForm()
-    fillMandatoryInfo(firstName, phoneNumber, mailAddress, initialBalance, emailCheckbox)
+    fillMandatoryInfo(firstName, phoneNumber, email, depositValue, emailCheckbox)
 
   steps:
     1. fill lastName with a random positive integrer and submit
@@ -175,7 +175,7 @@ test scenarios:
 
   preconditions:
     loadForm()
-    fillMandatoryInfo(firstName, phoneNumber, mailAddress, initialBalance, emailCheckbox)
+    fillMandatoryInfo(firstName, phoneNumber, email, depositValue, emailCheckbox)
 
   steps:
     1. fill lastName with user.lastName
