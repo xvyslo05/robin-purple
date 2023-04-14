@@ -1,3 +1,16 @@
+/*
+  3. Automate your test scenarios in Cypress so that you won't have to test them manually next
+time we make some changes to the app. If you don't have the time to write all the tests, don't worry.
+However, make sure to submit at least a few Cypress tests that you consider to be the most
+important.
+
+and 
+
+4. Write several Cypress tests in which you will use selected functions (cy.fixture, cy.intercept,
+cy.request) and make appropriate assertions. For this task, you don’t have to necessarily use the
+mock form.
+*/
+
 import * as formFixtures from "../fixtures/formFixtures.json";
 
 describe("Robin - Intro task", () => {
@@ -5,11 +18,8 @@ describe("Robin - Intro task", () => {
     cy.visit(formFixtures.env.formUrl);
   });
 
-  function randomDepositNumber() {
-    return Math.floor(
-      Math.random() * (formFixtures.maxDeposit - formFixtures.minDeposit) +
-        formFixtures.minDeposit
-    );
+  function randomDepositNumber(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
   }
 
   function trySubmitWithoutMandatoryData() {
@@ -24,19 +34,53 @@ describe("Robin - Intro task", () => {
     depositValue,
     emailCheckbox,
   }) {
-    if (firstName) cy.getById("lastname").type(firstName);
+    if (firstName) cy.getById("lastname").type(firstName); // bug reported in bugs.txt file
     if (phoneNumber) cy.getById("phone").type(phoneNumber);
     if (email) cy.getById("email").type(email);
     if (depositValue) cy.getById("deposit").type(depositValue);
     if (emailCheckbox) cy.getById("iAgreeDemo").check();
   }
 
-  it("Check form mandatory fields cannot be blank", () => {
-    const depositValue = randomDepositNumber();
+  function submitFormAndCheckData({
+    firstName,
+    lastName,
+    phoneNumber,
+    country,
+    platform,
+    accountType,
+    leverage,
+    currency,
+    depositValue,
+  }) {
     cy.intercept("POST", formFixtures.env.submitUrl).as("formSubmit");
+    cy.submitForm();
+    cy.wait("@formSubmit")
+      .its("request.body")
+      .then((body) => {
+        if (firstName) expect(body).to.include(`firstname=${firstName}`);
+        if (lastName) expect(body).to.include(`lastname=${lastName}`);
+        if (phoneNumber) expect(body).to.include(`phone=${phoneNumber}`);
+        if (platform) expect(body).to.include(`platform=${platform}`);
+        if (country) expect(body).to.include(`country=${country}`);
+        if (accountType) expect(body).to.include(`accountType=${accountType}`);
+        if (leverage) expect(body).to.include(`leverage=${leverage}`);
+        if (currency) expect(body).to.include(`currency=${currency}`);
+        if (depositValue) expect(body).to.include(`deposit=${depositValue}`);
+        expect(body).to.include(`iAgreeDemo=on`);
+
+        // if(email) expect(body).to.include(`email=${email}`);
+        // TODO: not checking email because of missing @ in the email. This will need some workaround
+      });
+  }
+
+  it("Check form mandatory fields cannot be blank", () => {
+    const depositValue = randomDepositNumber(
+      formFixtures.minDeposit,
+      formFixtures.maxDeposit
+    );
 
     trySubmitWithoutMandatoryData();
-    cy.getById("lastname").type(formFixtures.user.firstName);
+    cy.getById("lastname").type(formFixtures.user.firstName); // bug reported in bugs.txt file
 
     trySubmitWithoutMandatoryData();
     cy.getById("phone").type(formFixtures.user.phoneNumber);
@@ -50,18 +94,14 @@ describe("Robin - Intro task", () => {
     trySubmitWithoutMandatoryData();
     cy.getById("iAgreeDemo").check();
 
-    cy.submitForm();
-    cy.wait("@formSubmit")
-      .its("request.body")
-      .should("include", `lastname=${formFixtures.user.firstName}`)
-      .and("include", `phone=${formFixtures.user.phoneNumber}`)
-      .and("include", `deposit=${depositValue}`)
-      .and("include", `iAgreeDemo=on`);
-    // .and("include", `email=${formFixtures.user.email}`)
-    // TODO: not checking email because of missing @ in the email. This will need some workaround
+    submitFormAndCheckData({
+      lastName: formFixtures.user.firstName,
+      phoneNumber: formFixtures.user.phoneNumber,
+      depositValue: depositValue,
+    });
   });
 
-  it.only("Check that firstName is in correct format", () => {
+  it("Check that firstName is in correct format", () => {
     fillMandatoryData({
       phoneNumber: formFixtures.user.phoneNumber,
       email: formFixtures.user.email,
@@ -71,7 +111,116 @@ describe("Robin - Intro task", () => {
 
     cy.getById("lastname").type(123);
     trySubmitWithoutMandatoryData();
+  });
 
-    cy.getById("lastname").clear().type(formFixtures.user.firstName);
+  it("Check that phoneNumber is in correct format", () => {
+    fillMandatoryData({
+      firstName: formFixtures.user.firstName,
+      email: formFixtures.user.email,
+      depositValue: randomDepositNumber(
+        formFixtures.minDeposit,
+        formFixtures.maxDeposit
+      ),
+      emailCheckbox: true,
+    });
+
+    cy.getById("phone").type("abc");
+    trySubmitWithoutMandatoryData();
+  });
+
+  it("Check that email is in correct format", () => {
+    fillMandatoryData({
+      firstName: formFixtures.user.firstName,
+      phoneNumber: formFixtures.user.phoneNumber,
+      depositValue: randomDepositNumber(
+        formFixtures.minDeposit,
+        formFixtures.maxDeposit
+      ),
+      emailCheckbox: true,
+    });
+
+    cy.getById("email").type("foo");
+    trySubmitWithoutMandatoryData();
+
+    cy.getById("email").clear().type("foo@");
+    trySubmitWithoutMandatoryData();
+
+    cy.getById("email").clear().type("foo@bar");
+    trySubmitWithoutMandatoryData();
+
+    cy.getById("email").clear().type("foo@bar.b");
+    trySubmitWithoutMandatoryData();
+  });
+
+  it("Check that depositValue is in correct format", () => {
+    fillMandatoryData({
+      firstName: formFixtures.user.firstName,
+      phoneNumber: formFixtures.user.phoneNumber,
+      email: formFixtures.user.email,
+      emailCheckbox: true,
+    });
+
+    cy.getById("deposit").type(
+      randomDepositNumber(0, formFixtures.minDeposit - 1)
+    );
+    trySubmitWithoutMandatoryData();
+
+    cy.getById("deposit")
+      .clear()
+      .type(
+        randomDepositNumber(
+          formFixtures.maxDeposit + 1,
+          Number.MAX_SAFE_INTEGER
+        )
+      );
+    trySubmitWithoutMandatoryData();
+  });
+
+  it("Check that lastName is in correct format", () => {
+    fillMandatoryData({
+      firstName: formFixtures.user.firstName,
+      phoneNumber: formFixtures.user.phoneNumber,
+      email: formFixtures.user.email,
+      depositValue: randomDepositNumber(
+        formFixtures.minDeposit,
+        formFixtures.maxDeposit
+      ),
+      emailCheckbox: true,
+    });
+
+    cy.getById("firstname").type(123); // bug reported in bugs.txt file
+    trySubmitWithoutMandatoryData();
+  });
+
+  it("Happy path scenario", () => {
+    const depositValue = randomDepositNumber(
+      formFixtures.minDeposit,
+      formFixtures.maxDeposit
+    );
+
+    fillMandatoryData({
+      firstName: formFixtures.user.firstName,
+      phoneNumber: formFixtures.user.phoneNumber,
+      email: formFixtures.user.email,
+      depositValue,
+      emailCheckbox: true,
+    });
+
+    cy.getById("firstname").type(formFixtures.user.lastName); // bug reported in bugs.txt file
+    cy.getById("countryLabel").type(formFixtures.user.country);
+
+    cy.getById("platform").select(formFixtures.product.platform[0]); // possibility to enhance this and all selects with a random number between the range of the options
+    cy.getById("accountType").select(formFixtures.product.accountType[0]);
+    cy.getById("leverage").select(formFixtures.product.leverage[0]);
+    cy.getById("currency").select(formFixtures.product.currency[0]);
+
+    submitFormAndCheckData({
+      lastName: formFixtures.user.firstName,
+      phoneNumber: formFixtures.user.phoneNumber,
+      depositValue: depositValue,
+      firstName: formFixtures.user.lastName,
+      currency: formFixtures.product.currency[0],
+      country: formFixtures.user.country, //bug reported in bugs.txt file
+    });
   });
 });

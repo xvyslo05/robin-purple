@@ -11,3 +11,17 @@ Steps to reproduce:
 firstname and lastname inputs have changed id attributes
  - firstname's id attribute is 'lastname'
  - lastname's id attribute is 'firstname'
+
+------------------------------------------
+When sending a filled form, country is not set in the payload
+- two optional bugs:
+1. country selector does not work properly (you cannot select a country)
+2. country is filled wrong, therefore rather no value is sent (most unlikely)
+
+steps to reproduce:
+  1. go to form
+  2. fill all mandatory data
+  3. fill country field with a string "Japan"
+  4. submit form
+  5. open Network tab and find the submit-form POST request and see the payload
+
