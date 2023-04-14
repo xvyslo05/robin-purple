@@ -1,0 +1,195 @@
+description:
+2. Prepare test scenarios in a syntax that is suitable for automation. Try to cover as much of the
+form as possible.
+---------------------------------------------------------------------------------------------------
+
+solution:
+
+if possible, i will write preconditions in pseudo-code. It makes it easier for its reapplication later. 
+
+Since the select boxes are not mandatory, i will use them only on "full" happy path scenario. 
+
+consts:
+  baseUrl: 'https://revolgy-forms-case-study-master.staging.axiory.com/jp/registration/demo'
+
+credentials:
+  user:
+    lastName: 'Yamada'
+    firstName: 'Taro'
+    email: 'yamada.taro@senpaiii.com.jp'
+    country: 'Japan'
+    phoneNumber: '1234567890'
+  product:
+    platform: ['MetaTrader4', 'cTrader']
+    accountType: ['Standard (STP)', 'NANO (ECN)']
+    leverage: ['1:1', '1:10', '1:25', '1:50', '1:100', '1:200', '1:300', '1:400']
+    currency: ['JPY', 'USD', 'EUR']
+  minDeposit: 1000
+  maxDeposit: 10000000
+
+
+preconditions:
+  loadForm():
+    visit baseUrl
+    baseUrl is succefully loaded
+  
+  fillMandatoryInfo(firstName, phoneNumber, email, depositValue, emailCheckbox):
+    if(firstName)
+      fillFirstName(user.firstName)
+    if(phoneNumber):
+      fillPhoneNumber(user.phoneNumber)
+    if(email)
+      fillemail(user.email)
+    if(depositValue)
+      fillDepositValue(Math.random() * (maxDeposit - minDeposit) + minDeposit)
+    if(emailCheckbox)
+      checkEmailCheckbox(true)
+
+=====================================
+
+test scenarios:
+1. Check form mandatory fields cannot be blank
+  description:
+    The goal of this test case is to prove that user has to fill all mandatory fields before submitting
+    there are only a few mandatory fields in this form:
+      firstName
+      phoneNumber
+      email
+      depositValue
+      email checkbox
+  
+  preconditions:
+    loadForm()
+
+  steps:
+    1. submit form. After submit, there should be a message, that firstName is required and form should not be submitted
+    2. fill user.firstName into firstName field
+    3. submit form. After submit, there should be a message, that phoneNumber is required and form should not be submitted
+    4. fill user.phoneNumber into phoneNumber field
+    5. submit form. After submit, there should be a message, that email is required and form should not be submitted
+    6. fill user.email into email field
+    7. submit form. After submit, there should be a message, that depositValue is required and form should not be submitted
+    8. fill depositValue value into depositValue field. Get this number as a random integer between minDeposit and maxDeposit (both values included)
+    9. submit form. After submit, there should be a message, that checking the checkbox is required and form should not be submitted
+    10. check email checkbox as TRUE
+    11. submit form
+  
+  desired final state:
+    form is succesfully submitted and user is redirected to final page
+    optional addition for automation:
+      catch POST request to administration and check that all data are correctly set
+      check via API in administration that all the data are posted and saved correctly (not going to be implemented)
+      check via API the mailing box, if it contains an email with desired title and message (not implemented)
+
+2. Check that firstName is in correct format
+  description:
+    firstName value can be in letters only. The goal of this test case is to provide, that user can submit only valid format.
+
+  preconditions:
+    loadForm()
+    fillMandatoryInfo(phoneNumber, email, depositValue, emailCheckbox)
+  
+  steps:
+    1. fill random number value into firstName field
+    2. submit form
+
+  desired final state:
+    form is not send and error message is present
+
+3. Check that phoneNumber is numbers only
+  description:
+    Phone number should contain numbers only. The goal of this test case is to provide, that user can submit phoneNumber contains only numbers.
+    !!! BUT !!! as there is a validation missing (at this moment phoneNumber can contain letters as well), this test will fail, until a validation gets implemented
+
+  preconditions:
+    loadForm()
+    fillMandatoryInfo(firstName, email, depositValue, emailCheckbox)
+
+  steps:
+    1. fill phoneNumber with a random string of letters
+    2. submit form
+
+  desired final state:
+    After submit, there should be a message, that phoneNumber is in invalid format and form should not be submitted
+
+4. Check that email is in correct format
+  description:
+    Email should be in a valid format, as provided in the RFC2822 https://www.rfc-editor.org/rfc/rfc2822. The goal of this test case is to prove, that user has to fill email in a valid format.
+    !!! BUT !!! as there is a validation missing (at this moment email is checked that it only contains @ symbol + one more letter, for example `@a`), this test will fail, until a validation gets implemented
+
+  preconditions:
+    loadForm()
+    fillMandatoryInfo(firstName, phoneNumber)
+
+  steps:
+    1. fill email with a random string of letters and submit
+    2. after submit, there should be a message, that email is in invalid format and form should not be submitted
+    3. clear email and fill with `@foo` and submit
+    4. after submit, there should be a message, that email is in invalid format and form should not be submitted
+    5. clear email and fill with `foo@bar` and submit
+    6. after submit, there should be a message, that email is in invalid format and form should not be submitted
+    7. clear email and fill with `foo@bar.b` and submit
+    
+
+  desired final state:
+    After submit, there should be a message, that email is in invalid format and form should not be submitted
+
+5. Check that depositValue is in correct format
+  description:
+    Since the depositValue is supposed to be an integer of a interval <minDeposit; maxDeposit>, it is desired to check, that user is able to submit an interger from this interval only. The main goal of this test case is to prove it.
+
+  preconditions:
+    loadForm()
+    fillMandatoryInfo(firstName, phoneNumber, email, emailCheckbox)
+
+  steps:
+    1. fill depositValue letter string, for example "abc", and submit
+    2. after submit, there should be a message, that depositValue is in invalid format and form should not be submitted
+    3. fill depositValue with a negative integer, for example `-22`, and submit
+    4. after submit, there should be a message, that depositValue is in invalid format and form should not be submitted
+    5. clear depositValue and fill with a random integer from an interval <1; minDeposit) and submit
+    6. after submit, there should be a message, that depositValue has to be greather or equal than minDeposit and form should not be submitted
+    7. clear depositValue and fill with a random integer from an interval (maxDeposit; INT_MAX) and submit
+    8. after submit, there should be a message, that depositValue has to be lower or equal than maxDeposit and form should not be submitted
+  
+  desired final state:
+    after submit, there should be a message, that depositValue has to be lower or equal than maxDeposit and form should not be submitted
+
+6. Check that lastName is in correct format
+  description
+    Even though there is no mandatory validation, it is desired to get the lastName value in correct format. This will be also the main goal of this test case.
+
+  preconditions:
+    loadForm()
+    fillMandatoryInfo(firstName, phoneNumber, email, depositValue, emailCheckbox)
+
+  steps:
+    1. fill lastName with a random positive integrer and submit
+
+  desired final state:
+    After submit, there should be a message, that lastName is in invalid format and form should not be submitted
+
+7. Happy path scenario
+  description:
+    The main goal of this test case is to prove, that data from the form are being sent correctly to administration. Also in this we are testing the functionability of select boxes.
+
+  preconditions:
+    loadForm()
+    fillMandatoryInfo(firstName, phoneNumber, email, depositValue, emailCheckbox)
+
+  steps:
+    1. fill lastName with user.lastName
+    2. fill country with user.country
+    3. select platform with a random value from product.platform array and save the value
+    4. select accountType with a random value from product.accountType array and save the value
+    5. select leverage with a random value from product.leverage array and save the value
+    7. select currency with a random value from product.currency array and save the value
+    8. submit the form
+
+    desired final state:
+      form is succesfully submitted and user is redirected to final page
+      optional addition for automation:
+        catch POST request to administration and check that all data are correctly set
+        check via API in administration that all the data are posted and saved correctly (not going to be implemented)
+        check via API the mailing box, if it contains an email with desired title and message (not implemented)
+  
