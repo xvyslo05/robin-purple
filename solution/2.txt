@@ -79,7 +79,7 @@ test scenarios:
     optional addition for automation:
       catch POST request to administration and check that all data are correctly set
       check via API in administration that all the data are posted and saved correctly (not going to be implemented)
-      check via API the mailing box, if it contains an email with desired title and message (if possible)
+      check via API the mailing box, if it contains an email with desired title and message (not implemented)
 
 2. Check that firstName is in correct format
   description:
@@ -87,14 +87,14 @@ test scenarios:
 
   preconditions:
     loadForm()
+    fillMandatoryInfo(phoneNumber, mailAddress, initialBalance, emailCheckbox)
   
   steps:
-    1. fill random number value into firstName field and submit
-    2. There should be a message that firstName is in invalid format
-    3. clear firstName field and fill with user.firstName and submit
+    1. fill random number value into firstName field
+    2. submit form
 
   desired final state:
-    form is not send and there is a message which says that phoneNumber is not set
+    form is not send and error message is present
 
 3. Check that phoneNumber is numbers only
   description:
@@ -103,15 +103,14 @@ test scenarios:
 
   preconditions:
     loadForm()
-    fillMandatoryInfo(firstName)
+    fillMandatoryInfo(firstName, mailAddress, initialBalance, emailCheckbox)
 
   steps:
-    1. fill phoneNumber with a random string of letters and submit
-    2. After submit, there should be a message, that phoneNumber is in invalid format and form should not be submitted
-    3. Clear phoneNumber and fill it with user.PhoneNumber and submit
+    1. fill phoneNumber with a random string of letters
+    2. submit form
 
   desired final state:
-    there should be a message, that mailAddress is required and form should not be submitted
+    After submit, there should be a message, that phoneNumber is in invalid format and form should not be submitted
 
 4. Check that email is in correct format
   description:
@@ -125,14 +124,15 @@ test scenarios:
   steps:
     1. fill mailAddress with a random string of letters and submit
     2. after submit, there should be a message, that mailAddress is in invalid format and form should not be submitted
-    3. clear mailAddress and fill with `@a` and submit
+    3. clear mailAddress and fill with `@foo` and submit
     4. after submit, there should be a message, that mailAddress is in invalid format and form should not be submitted
-    5. clear mailAddress and fill with `@aa.com` and submit
+    5. clear mailAddress and fill with `foo@bar` and submit
     6. after submit, there should be a message, that mailAddress is in invalid format and form should not be submitted
-    7. clear mailAddress and fill with user.mailAddress and submit
+    7. clear mailAddress and fill with `foo@bar.b` and submit
+    
 
   desired final state:
-    After submit, there should be a message, that initialBalance is required and form should not be submitted
+    After submit, there should be a message, that mailAddress is in invalid format and form should not be submitted
 
 5. Check that initialBalance is in correct format
   description:
@@ -140,19 +140,20 @@ test scenarios:
 
   preconditions:
     loadForm()
-    fillMandatoryInfo(firstName, phoneNumber, mailAddress)
+    fillMandatoryInfo(firstName, phoneNumber, mailAddress, emailCheckbox)
 
   steps:
-    1. fill initialBalance with a negative integer, for example `-22`, and submit
+    1. fill initialBalance letter strip, for example "abc", and submit
     2. after submit, there should be a message, that initialBalance is in invalid format and form should not be submitted
-    3. clear initialBalance and fill with a random integer from an interval <1; minDeposit) and submit
-    4. after submit, there should be a message, that initialBalance has to be greather or equal than minDeposit
-    5. clear initialBalance and fill with a random integer from an interval (maxDeposit; INT_MAX) and submit
-    6. after submit, there should be a message, that initialBalance has to be lower or equal than maxDeposit
-    7. clear initialBalance and fill with a random integer from an interval <minDeposit; maxDeposit> and submit
+    3. fill initialBalance with a negative integer, for example `-22`, and submit
+    4. after submit, there should be a message, that initialBalance is in invalid format and form should not be submitted
+    5. clear initialBalance and fill with a random integer from an interval <1; minDeposit) and submit
+    6. after submit, there should be a message, that initialBalance has to be greather or equal than minDeposit and form should not be submitted
+    7. clear initialBalance and fill with a random integer from an interval (maxDeposit; INT_MAX) and submit
+    8. after submit, there should be a message, that initialBalance has to be lower or equal than maxDeposit and form should not be submitted
   
   desired final state:
-    After submit, there should be a message, that checking the checkbox is required and form should not be submitted
+    after submit, there should be a message, that initialBalance has to be lower or equal than maxDeposit and form should not be submitted
 
 6. Check that lastName is in correct format
   description
@@ -160,16 +161,13 @@ test scenarios:
 
   preconditions:
     loadForm()
+    fillMandatoryInfo(firstName, phoneNumber, mailAddress, initialBalance, emailCheckbox)
 
   steps:
     1. fill lastName with a random positive integrer and submit
-    2. after submit, there should be a message, that lastName is in invalid format and form should not be submitted
-    3. clear lastName and fill it with user.lastName and submit
-    4. after submit, there should be a message, that firstName is in invalid format and form should not be submitted
-    5. clear lastName and fill it with `user.lastName + 'II.'` and submit
 
   desired final state:
-    After submit, there should be a message, that firstName is in invalid format and form should not be submitted
+    After submit, there should be a message, that lastName is in invalid format and form should not be submitted
 
 7. Happy path scenario
   description:
@@ -193,5 +191,5 @@ test scenarios:
       optional addition for automation:
         catch POST request to administration and check that all data are correctly set
         check via API in administration that all the data are posted and saved correctly (not going to be implemented)
-        check via API the mailing box, if it contains an email with desired title and message (if possible)
+        check via API the mailing box, if it contains an email with desired title and message (not implemented)
   

@@ -9,6 +9,10 @@ and
 4. Write several Cypress tests in which you will use selected functions (cy.fixture, cy.intercept,
 cy.request) and make appropriate assertions. For this task, you don’t have to necessarily use the
 mock form.
+
+cy.fixture() -> used as a import -> more readable than using cy.fixture(), by documentation it is a valid usage
+cy.intercept() -> used to intercept the form submit request and check the data
+cy.request() -> not used, but I would use it to check the form submit via API and then checking it in the administration -> see the it.skip() test
 */
 
 import * as formFixtures from "../fixtures/formFixtures.json";
@@ -142,6 +146,9 @@ describe("Robin - Intro task", () => {
     cy.getById("email").type("foo");
     trySubmitWithoutMandatoryData();
 
+    cy.getById("email").clear().type("@foo");
+    trySubmitWithoutMandatoryData();
+
     cy.getById("email").clear().type("foo@");
     trySubmitWithoutMandatoryData();
 
@@ -160,8 +167,14 @@ describe("Robin - Intro task", () => {
       emailCheckbox: true,
     });
 
+    cy.getById("deposit").type("abc");
+    trySubmitWithoutMandatoryData();
+
+    cy.getById("deposit").type(-22);
+    trySubmitWithoutMandatoryData();
+
     cy.getById("deposit").type(
-      randomDepositNumber(0, formFixtures.minDeposit - 1)
+      randomDepositNumber(1, formFixtures.minDeposit - 1)
     );
     trySubmitWithoutMandatoryData();
 
@@ -222,5 +235,52 @@ describe("Robin - Intro task", () => {
       currency: formFixtures.product.currency[0],
       country: formFixtures.user.country, // country bug reported in bugs.txt file
     });
+  });
+
+  it.skip("Send form directly via API", () => {
+    const depositValue = randomDepositNumber(
+      formFixtures.minDeposit,
+      formFixtures.maxDeposit
+    );
+
+    cy.request({
+      method: "POST",
+      url: formFixtures.env.submitUrl,
+      body: {
+        lastname: formFixtures.user.firstName,
+        phone: formFixtures.user.phoneNumber,
+        email: formFixtures.user.email,
+        deposit: depositValue,
+        iAgreeDemo: "on",
+        platform: formFixtures.product.platform[0],
+        accountType: formFixtures.product.accountType[0],
+        leverage: formFixtures.product.leverage[0],
+        currency: formFixtures.product.currency[0],
+      },
+    })
+      .then((response) => {
+        expect(response.status).to.eq(200);
+      })
+      .then(() => {
+        cy.request({
+          method: "GET",
+          url: formFixtures.env.adminUrl,
+          headers: {
+            authorization: `Basic ${formFixtures.env.adminCredentials}`,
+          },
+        }).then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.include({
+            lastname: formFixtures.user.firstName,
+            phone: formFixtures.user.phoneNumber,
+            email: formFixtures.user.email,
+            deposit: depositValue,
+            platform: formFixtures.product.platform[0],
+            accountType: formFixtures.product.accountType[0],
+            leverage: formFixtures.product.leverage[0],
+            currency: formFixtures.product.currency[0],
+          });
+        });
+      });
   });
 });
